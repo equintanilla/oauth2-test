@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 
 app.get('/auth', passport.authenticate('oauth2'));
 
-app.post('/auth/callback',
+app.get('/auth/callback',
     passport.authenticate('oauth2', { failureRedirect: '/login' }),
     (req, res) => {
         console.log('!!! BAM');
