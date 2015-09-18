@@ -14,24 +14,29 @@ import {
 let app = express();
 
 passport.use(
-    new OAuth2Strategy({
-        authorizationURL: AUTH_URL,
-        tokenURL: TOKEN_URL,
-        clientID: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        callbackURL: `${CALLBACK_HOST}/auth/callback`
-    },
-    function (accessToken, refreshToken, {}, done) {
-        console.log('Token responses:', accessToken, refreshToken);
-        done();
-    }
-));
+    new OAuth2Strategy(
+        {
+            authorizationURL: AUTH_URL,
+            tokenURL: TOKEN_URL,
+            clientID: CLIENT_ID,
+            clientSecret: CLIENT_SECRET,
+            callbackURL: `${CALLBACK_HOST}/auth/callback`
+        },
+        function (accessToken, refreshToken, {}, done) {
+            console.log('Token responses:', accessToken, refreshToken);
+            done();
+        }
+    ));
 
 app.get('/', (req, res) => {
     res.send({ hereThereBe: 'nothing', goto: '/auth' });
 });
 
 app.get('/auth', passport.authenticate('oauth2'));
+
+app.get('/login', (req, res) => {
+    res.send('<html><head></head><body><div>auth failed</div><a href="/auth"> go to Auth</a></body></html>');
+});
 
 app.get('/auth/callback',
     passport.authenticate('oauth2', { failureRedirect: '/login' }),
