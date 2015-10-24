@@ -1,6 +1,9 @@
 import express from 'express';
 import passport from 'passport';
 import OAuth2Strategy from 'passport-oauth2';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+
 import {
     BIND_HOST,
     BIND_PORT,
@@ -22,11 +25,22 @@ passport.use(
             clientSecret: CLIENT_SECRET,
             callbackURL: `${CALLBACK_HOST}/auth/callback`
         },
-        function (accessToken, refreshToken, {}, done) {
-            console.log('Token responses:', accessToken, refreshToken);
-            done();
+        function (accessToken, refreshToken, profile, done) {
+            console.log('Token responses:', accessToken, refreshToken, profile);
+            done(null, { username: 'ed' }, { perms: 'all' });
         }
     ));
+
+passport.deserializeUser(function (id, done) {
+    done(null, id);
+});
+passport.serializeUser(function (id, done) {
+    done(null, id);
+});
+app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat' }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
     res.send({ hereThereBe: 'nothing', goto: '/auth' });
