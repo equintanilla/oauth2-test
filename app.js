@@ -27,7 +27,11 @@ passport.use(
         },
         function (accessToken, refreshToken, profile, done) {
             console.log('Token responses:', accessToken, refreshToken, profile);
-            done(null, { username: 'ed' }, { perms: 'all' });
+            done(null, {
+                username: 'some-user',
+                accessToken: accessToken,
+                refreshToken: refreshToken
+            }, { perms: ['some application specific perm'] });
         }
     ));
 
@@ -61,7 +65,7 @@ app.get('/auth/callback',
 );
 
 app.get('/success', (req, res) => {
-    res.send({ hereThereBe: 'success' });
+    res.send({ hereThereBe: 'success', user: req.user });
 });
 
 console.log(`Server started at http://${BIND_HOST}:${BIND_PORT}`);
